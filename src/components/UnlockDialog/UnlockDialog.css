@@ -1,0 +1,57 @@
+.unlock-form { display: flex; flex-direction: column; gap: 14px; }
+.unlock-hint { font-size: 13px; color: var(--text-secondary); text-align: center; }
+
+.pw-field { display: flex; flex-direction: column; gap: 6px; }
+.pw-field > span { font-size: 12px; color: var(--text-secondary); font-weight: 500; }
+.pw-input-wrap { position: relative; }
+.pw-input-wrap input {
+  width: 100%;
+  padding: 8px 40px 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  font-size: 14px;
+}
+.pw-input-wrap input:focus { border-color: var(--accent); outline: none; }
+.pw-toggle {
+  position: absolute;
+  right: 6px; top: 50%;
+  transform: translateY(-50%);
+  padding: 4px 8px;
+}
+.pw-field select {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  font-size: 13px;
+}
+
+.forgot-link {
+  align-self: center;
+  color: var(--text-tertiary);
+  font-size: 12px;
+  text-decoration: underline;
+  padding: 4px;
+}
+.forgot-link:hover { color: var(--danger); }
+
+.reset-box {
+  padding: 12px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.reset-warn { font-size: 12px; color: var(--danger); }
+.reset-box input {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+  font-family: monospace;
+  font-size: 12px;
+}
+.reset-actions { display: flex; gap: 8px; justify-content: flex-end; }

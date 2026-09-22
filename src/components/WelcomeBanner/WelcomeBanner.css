@@ -1,0 +1,20 @@
+.welcome-banner {
+  background: linear-gradient(135deg, var(--accent-alpha), transparent);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  animation: wb-in .3s;
+}
+@keyframes wb-in { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+.wb-content { display: flex; align-items: center; gap: 14px; }
+.wb-icon { font-size: 28px; }
+.wb-body { flex: 1; }
+.wb-title { font-weight: 600; margin-bottom: 4px; }
+.wb-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+.wb-actions { display: flex; gap: 8px; }
+
+@media (max-width: 640px) {
+  .wb-content { flex-direction: column; text-align: center; }
+  .wb-actions { width: 100%; justify-content: center; }
+}

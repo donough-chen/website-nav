@@ -1,0 +1,102 @@
+.publish-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.pp-warn {
+  padding: 10px 12px;
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--warning);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+}
+.pp-status {
+  padding: 10px 12px;
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--border);
+}
+.pp-status.success { border-left-color: var(--success); }
+.pp-status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 500;
+  font-size: 13px;
+}
+.pp-time { font-size: 11px; color: var(--text-tertiary); font-weight: normal; }
+.pp-gist-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 12px;
+  flex-wrap: wrap;
+}
+.pp-label { color: var(--text-tertiary); }
+.pp-gist-id {
+  padding: 2px 6px;
+  background: var(--bg-elevated);
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 11px;
+  word-break: break-all;
+}
+.btn-tiny {
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  text-decoration: none;
+  color: inherit;
+}
+.btn-tiny:hover { background: var(--bg-hover); }
+
+.pp-form { display: flex; flex-direction: column; gap: 12px; }
+.pp-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.pp-info { flex: 1; font-size: 13px; }
+.pp-excluded { color: var(--text-tertiary); }
+.pp-hint { font-size: 12px; color: var(--text-tertiary); }
+.pp-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.pp-tags-section {
+  padding: 10px 12px;
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+}
+.pp-tags-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.btn-link {
+  color: var(--accent);
+  font-size: 12px;
+  text-decoration: underline;
+  padding: 2px 4px;
+}
+.pp-tag-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 10px;
+}
+.pp-tag {
+  padding: 3px 10px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: 11px;
+  background: var(--bg-elevated);
+}
+.pp-tag.excluded {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+  border-color: var(--danger);
+}

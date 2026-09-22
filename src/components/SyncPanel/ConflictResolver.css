@@ -1,0 +1,84 @@
+.conflict-resolver { display: flex; flex-direction: column; gap: 16px; }
+.conflict-hint {
+  padding: 10px 12px;
+  background: var(--accent-alpha);
+  color: var(--accent);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+}
+.conflict-section { display: flex; flex-direction: column; gap: 12px; }
+.section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+.bulk-ops { display: flex; gap: 4px; }
+.bulk-ops button {
+  padding: 4px 8px;
+  font-size: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+}
+.bulk-ops button:hover { background: var(--bg-hover); }
+
+.conflict-row {
+  padding: 12px;
+  background: var(--bg);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.conflict-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.conflict-card {
+  padding: 10px;
+  background: var(--bg-elevated);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: border .15s;
+}
+.conflict-card.suggested { border-color: var(--warning); }
+.conflict-card.chosen { border-color: var(--accent); background: var(--accent-alpha); }
+
+.card-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.card-head .badge {
+  font-size: 10px;
+  padding: 1px 6px;
+  background: var(--warning);
+  color: white;
+  border-radius: 8px;
+}
+.card-head .time {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text-tertiary);
+  font-weight: 400;
+}
+.card-item { font-size: 13px; word-break: break-all; }
+.c-url { color: var(--text-tertiary); font-size: 11px; margin-top: 2px; }
+.c-meta { color: var(--text-tertiary); font-size: 11px; margin-top: 2px; }
+
+.skip-btn {
+  padding: 6px;
+  font-size: 12px;
+  color: var(--text-tertiary);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+}
+.skip-btn.active { color: var(--danger); border-color: var(--danger); }
+
+@media (max-width: 640px) {
+  .conflict-cards { grid-template-columns: 1fr; }
+}

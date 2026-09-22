@@ -1,0 +1,11 @@
+yarn.lock
+yarn-error.log
+package-lock.json
+node_modules
+.DS_Store
+dist
+.vscode
+.codebuddy
+.env
+.env.local
+.env.production
