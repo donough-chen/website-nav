@@ -4,6 +4,7 @@ import { SiteCard } from '../SiteCard/SiteCard';
 import { VirtualGrid } from '../VirtualGrid/VirtualGrid';
 import { useDropCategory } from '@/hooks/useDropCategory';
 import { useAuth } from '@/hooks/useAuth';
+import { useApp } from '@/store/context';
 import './SiteGrid.css';
 
 interface Props {
@@ -18,9 +19,17 @@ const VIRTUAL_THRESHOLD = 100;
 
 function SiteGridBase({ category, sites, onEditSite, onAddSite, onShareSite }: Props) {
   const { canEdit } = useAuth();
-  // 拖放接收仅 admin 启用
+  const { state } = useApp();
+  const layout = state.settings.layout ?? 'card';
   const dropBind = canEdit ? useDropCategory(category.id) : {};
-  const useVirtual = sites.length > VIRTUAL_THRESHOLD;
+  const useVirtual = sites.length > VIRTUAL_THRESHOLD && layout === 'card';
+
+  // 不同布局的虚拟滚动尺寸
+  const virtualConfig = {
+    card:    { itemHeight: 110, minItemWidth: 240 },
+    list:    { itemHeight: 64,  minItemWidth: 9999 }, // 强制单列
+    compact: { itemHeight: 44,  minItemWidth: 160 },
+  }[layout] ?? { itemHeight: 110, minItemWidth: 240 };
 
   return (
     <section class="site-section" data-category={category.id} {...dropBind}>
@@ -42,14 +51,14 @@ function SiteGridBase({ category, sites, onEditSite, onAddSite, onShareSite }: P
       ) : useVirtual ? (
         <VirtualGrid
           items={sites}
-          itemHeight={110}
-          minItemWidth={240}
+          itemHeight={virtualConfig.itemHeight}
+          minItemWidth={virtualConfig.minItemWidth}
           gap={12}
           keyExtractor={s => s.id}
           renderItem={site => <SiteCard site={site} onEdit={onEditSite} onShare={onShareSite} />}
         />
       ) : (
-        <div class="site-grid">
+        <div class={`site-grid layout-${layout}`}>
           {sites.map(site => (
             <SiteCard key={site.id} site={site} onEdit={onEditSite} onShare={onShareSite} />
           ))}

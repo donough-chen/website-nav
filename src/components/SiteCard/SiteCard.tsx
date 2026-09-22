@@ -24,6 +24,7 @@ function SiteCardBase({ site, onEdit, onShare }: Props) {
   const [sheetOpen, setSheetOpen] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
+  const layout = state.settings.layout ?? 'card';
 
   const faviconUrl = site.icon || getFaviconUrl(site.url, state.settings);
 
@@ -53,9 +54,21 @@ function SiteCardBase({ site, onEdit, onShare }: Props) {
     setShowMenu(false); setSheetOpen(false);
   };
 
+  const showDesc = state.settings.showDescription && site.description && layout !== 'compact';
+  const showRating = state.settings.showRating && site.rating && layout === 'card';
+  const showTags = layout === 'card';
+
   return (
     <>
-      <div class="site-card" data-site={site.id} ref={cardRef} onClick={handleClick} {...dragBind}>
+      <div
+        class="site-card"
+        data-site={site.id}
+        data-layout={layout}
+        ref={cardRef}
+        onClick={handleClick}
+        title={layout === 'compact' ? `${site.name}\n${site.url}` : undefined}
+        {...dragBind}
+      >
         <div class="card-icon">
           <LazyIcon src={faviconUrl} name={site.name} />
         </div>
@@ -64,22 +77,24 @@ function SiteCardBase({ site, onEdit, onShare }: Props) {
             <span class="card-name">{site.name}</span>
             {site.pinned && <span class="pin-badge" title="已置顶">📌</span>}
           </div>
-          {state.settings.showDescription && site.description && (
+          {showDesc && (
             <div class="card-desc">{site.description}</div>
           )}
-          <div class="card-footer">
-            {state.settings.showRating && site.rating ? (
-              <span class="rating">
-                {'★'.repeat(Math.round(site.rating))}
-                <span class="rating-off">{'★'.repeat(5 - Math.round(site.rating))}</span>
-              </span>
-            ) : <span />}
-            {site.tags && site.tags.length > 0 && (
-              <div class="tags">
-                {site.tags.slice(0, 2).map(t => <span key={t} class="tag">{t}</span>)}
-              </div>
-            )}
-          </div>
+          {(showRating || showTags) && (
+            <div class="card-footer">
+              {showRating ? (
+                <span class="rating">
+                  {'★'.repeat(Math.round(site.rating!))}
+                  <span class="rating-off">{'★'.repeat(5 - Math.round(site.rating!))}</span>
+                </span>
+              ) : <span />}
+              {showTags && site.tags && site.tags.length > 0 && (
+                <div class="tags">
+                  {site.tags.slice(0, 2).map(t => <span key={t} class="tag">{t}</span>)}
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* PC 端菜单 */}
