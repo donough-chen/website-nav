@@ -1,63 +1,79 @@
 .site-section {
   margin-bottom: 32px;
-  scroll-margin-top: 20px;
+  scroll-margin-top: 72px;
 }
+
 .section-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 12px;
 }
+
 .section-header h2 {
   display: flex;
   align-items: center;
   gap: 8px;
+  margin: 0;
   font-size: 16px;
   font-weight: 600;
-  margin: 0;
 }
+
 .section-icon { font-size: 18px; }
 .section-count {
-  font-size: 12px;
-  font-weight: 400;
-  color: var(--text-tertiary);
-  padding: 2px 8px;
-  background: var(--bg-elevated);
+  padding: 1px 8px;
   border-radius: 10px;
+  background: var(--bg);
+  color: var(--text-tertiary);
+  font-size: 11px;
+  font-weight: normal;
 }
+.virtual-badge {
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--accent-alpha);
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: normal;
+}
+
 .empty-hint {
   padding: 24px;
   text-align: center;
   color: var(--text-tertiary);
   font-size: 13px;
-  border: 1px dashed var(--border);
+  background: var(--bg);
   border-radius: var(--radius-md);
+  border: 2px dashed var(--border);
 }
 
-.site-grid {
+/* ================= 布局：卡片 ================= */
+.site-grid.layout-card {
   display: grid;
-  gap: 12px;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
 }
 
-@media (max-width: 767px) {
-  .site-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-  .site-section { margin-bottom: 24px; }
-}
-@media (max-width: 400px) {
-  .site-grid { grid-template-columns: 1fr; }
+/* ================= 布局：列表 ================= */
+.site-grid.layout-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.virtual-badge {
-  font-size: 10px;
-  padding: 1px 6px;
-  background: var(--accent-alpha);
-  color: var(--accent);
-  border-radius: 8px;
-  font-weight: 400;
+/* ================= 布局：紧凑 ================= */
+.site-grid.layout-compact {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 6px;
 }
-.site-section[data-drop-active="true"] {
-  outline: 2px dashed var(--accent);
-  outline-offset: 4px;
-  border-radius: var(--radius-md);
+
+@media (max-width: 640px) {
+  .site-grid.layout-card {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+  }
+  .site-grid.layout-compact {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  }
 }
