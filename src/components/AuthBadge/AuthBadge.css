@@ -1,0 +1,24 @@
+.auth-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px 3px 10px;
+  background: var(--accent-alpha);
+  color: var(--accent);
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.badge-icon { font-size: 12px; }
+.badge-remaining { color: var(--text-tertiary); font-weight: 400; }
+.badge-lock {
+  padding: 2px 4px;
+  border-radius: 6px;
+  transition: background .15s;
+}
+.badge-lock:hover { background: rgba(0, 0, 0, 0.08); }
+
+@media (max-width: 640px) {
+  .badge-label { display: none; }
+  .badge-remaining { display: none; }
+}

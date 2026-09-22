@@ -1,0 +1,53 @@
+.share-dialog { display: flex; flex-direction: column; gap: 14px; align-items: center; }
+.share-preview {
+  width: 100%;
+  padding: 12px;
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  text-align: center;
+}
+.share-name { font-weight: 600; margin-bottom: 4px; }
+.share-url { font-size: 12px; color: var(--text-tertiary); word-break: break-all; }
+
+.share-qr { text-align: center; }
+.share-qr img { border: 1px solid var(--border); border-radius: var(--radius-sm); background: white; padding: 6px; }
+.qr-hint { font-size: 11px; color: var(--text-tertiary); margin-top: 6px; }
+
+.share-link-box { width: 100%; }
+.share-link-box input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  font-size: 12px;
+  font-family: monospace;
+}
+
+.share-actions { display: flex; gap: 8px; }
+.share-hint {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  text-align: center;
+}
+.share-desc {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.share-tags {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+.incoming-share { display: flex; flex-direction: column; gap: 14px; }
+.incoming-form label { display: flex; flex-direction: column; gap: 6px; }
+.incoming-form label > span { font-size: 12px; color: var(--text-secondary); }
+.incoming-form select {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+}

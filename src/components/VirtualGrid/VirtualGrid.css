@@ -1,0 +1,26 @@
+.vgrid {
+  position: relative;
+  display: block;
+}
+
+.vgrid-cell {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.vgrid {
+  position: relative;
+  width: 100%;
+}
+
+.vgrid-cell {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.vgrid-cell>* {
+  width: 100%;
+  height: 100%;
+}

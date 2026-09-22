@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00c6ff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0072ff;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- 背景圆 -->
+  <circle cx="100" cy="100" r="90" fill="url(#bgGrad)"/>
+  
+  <!-- 字母N -->
+  <path d="M 60 140 L 60 60 L 75 60 L 125 120 L 125 60 L 140 60 L 140 140 L 125 140 L 75 80 L 75 140 Z" 
+        fill="#ffffff"/>
+  
+  <!-- 定位标记 -->
+  <circle cx="150" cy="55" r="18" fill="#ff4757"/>
+  <circle cx="150" cy="55" r="7" fill="#ffffff"/>
+  
+  <!-- 装饰性圆点 -->
+  <circle cx="45" cy="45" r="4" fill="#ffffff" opacity="0.6"/>
+  <circle cx="45" cy="155" r="3" fill="#ffffff" opacity="0.4"/>
+  <circle cx="160" cy="145" r="5" fill="#ffffff" opacity="0.5"/>
+</svg>

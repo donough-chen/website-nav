@@ -1,0 +1,42 @@
+.site-form { display: flex; flex-direction: column; gap: 14px; }
+.site-form label { display: flex; flex-direction: column; gap: 6px; }
+.site-form label > span {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+.site-form input, .site-form textarea, .site-form select {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  font-size: 14px;
+  outline: none;
+  transition: border .15s;
+}
+.site-form input:focus, .site-form textarea:focus, .site-form select:focus {
+  border-color: var(--accent);
+}
+.site-form textarea { resize: vertical; font-family: inherit; }
+
+.rating-picker { display: flex; gap: 6px; }
+.rating-btn {
+  padding: 4px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.rating-btn.active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+.form-error {
+  padding: 8px 12px;
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+}
