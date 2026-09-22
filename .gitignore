@@ -1,6 +1,6 @@
-yarn.lock
+# yarn.lock
 yarn-error.log
-package-lock.json
+# package-lock.json
 node_modules
 .DS_Store
 dist
