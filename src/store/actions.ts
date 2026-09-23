@@ -83,6 +83,15 @@ export const createActions = (dispatch: (a: Action) => void, getState: () => App
 			dispatch({ type: 'ADD_SITE', payload: site });
 			return site;
 		},
+    /** 切换收藏：所有模式可用（本地存储） */
+    toggleFavorite(id: string) {
+      dispatch({ type: 'TOGGLE_FAVORITE', payload: { id } });
+    },
+
+    /** 清空收藏 */
+    clearFavorites() {
+      dispatch({ type: 'CLEAR_FAVORITES' });
+    },
 	};
 };
 

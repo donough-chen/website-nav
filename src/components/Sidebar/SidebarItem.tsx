@@ -6,15 +6,19 @@ interface Props {
   count: number;
   active: boolean;
   canEdit: boolean;
+  builtin?: boolean;
   dragBind: Record<string, any>;
   onSelect: () => void;
 }
 
-export function SidebarItem({ category, count, active, canEdit, dragBind, onSelect }: Props) {
-  const dropBind = canEdit ? useDropCategory(category.id) : {};
+export function SidebarItem({ category, count, active, canEdit, builtin, dragBind, onSelect }: Props) {
+  // 始终调用 hook，通过条件决定是否启用
+  const dropBindings = useDropCategory(category.id);
+  const dropBind = (canEdit && !builtin) ? dropBindings : {};
+
   return (
     <button
-      class={`sidebar-item ${active ? 'active' : ''}`}
+      class={`sidebar-item ${active ? 'active' : ''} ${builtin ? 'builtin' : ''}`}
       onClick={onSelect}
       {...dragBind}
       {...dropBind}

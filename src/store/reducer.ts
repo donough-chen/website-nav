@@ -22,7 +22,9 @@ export type Action =
 	| { type: 'SET_AUTH_FAIL'; payload: { failedAttempts: number; lockedUntil: number } }
 	| { type: 'DISMISS_WELCOME' }
   | { type: 'UPDATE_PUBLIC_SOURCE_CONFIG'; payload: Partial<PublicSourceConfig> }
-  | { type: 'REPLACE_PUBLIC_DATA'; payload: { sites: Site[]; categories: Category[] } };
+  | { type: 'REPLACE_PUBLIC_DATA'; payload: { sites: Site[]; categories: Category[] } }
+  | { type: 'TOGGLE_FAVORITE'; payload: { id: string } }
+  | { type: 'CLEAR_FAVORITES' };
 
 export const defaultSettings: Settings = {
 	theme: 'auto',
@@ -61,6 +63,7 @@ export const initialState: AppState = {
     autoPublish: false,
     excludeTags: [],
   },
+  favorites: [],
 };
 
 function addTombstone(list: Tombstone[], t: Tombstone): Tombstone[] {
@@ -81,18 +84,18 @@ export function reducer(state: AppState, action: Action): AppState {
 				sites: state.sites.map((s) => (s.id === action.payload.id ? { ...s, ...action.payload.patch, updatedAt: Date.now() } : s)),
 			};
 
-		case 'REMOVE_SITE': {
-			const now = Date.now();
-			return {
-				...state,
-				sites: state.sites.filter((s) => s.id !== action.payload.id),
-				tombstones: addTombstone(state.tombstones, {
-					id: action.payload.id,
-					type: 'site',
-					deletedAt: now,
-				}),
-			};
-		}
+    case 'REMOVE_SITE': {
+      const site = state.sites.find(s => s.id === action.payload.id);
+      const tombstones = site
+        ? [...state.tombstones, { id: site.id, type: 'site' as const, deletedAt: Date.now() }]
+        : state.tombstones;
+      return {
+        ...state,
+        sites: state.sites.filter(s => s.id !== action.payload.id),
+        favorites: state.favorites.filter(x => x !== action.payload.id), // ← 新增
+        tombstones,
+      };
+    }
 
 		case 'BATCH_ADD_SITES':
 			return { ...state, sites: [...state.sites, ...action.payload] };
@@ -209,6 +212,17 @@ export function reducer(state: AppState, action: Action): AppState {
       }));
       return { ...state, sites: newSites, categories: action.payload.categories };
     }
+
+    case 'TOGGLE_FAVORITE': {
+      const idx = state.favorites.indexOf(action.payload.id);
+      const next = idx >= 0
+        ? state.favorites.filter(x => x !== action.payload.id)
+        : [action.payload.id, ...state.favorites]; // 最新收藏置顶
+      return { ...state, favorites: next };
+    }
+
+    case 'CLEAR_FAVORITES':
+      return { ...state, favorites: [] };
 
 		default:
 			return state;

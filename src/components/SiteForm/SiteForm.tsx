@@ -4,6 +4,7 @@ import { useApp, useActions } from '@/store/context';
 import { isValidUrl, ensureProtocol } from '@/utils/url';
 import { Modal } from '../Modal/Modal';
 import { useAuth } from '@/hooks/useAuth';
+import { isBuiltInCategory } from '@/constants/builtInCategories';
 import './SiteForm.css';
 
 interface Props {
@@ -26,6 +27,9 @@ export function SiteForm({ open, site, defaultCategoryId, onClose }: Props) {
   const [tags, setTags] = useState('');
   const [categoryId, setCategoryId] = useState('');
   const [error, setError] = useState('');
+
+  // categories 下拉源
+  const selectableCategories = state.categories.filter(c => !isBuiltInCategory(c.id));
 
   if (open && !canEdit) {
     return (
@@ -100,7 +104,7 @@ export function SiteForm({ open, site, defaultCategoryId, onClose }: Props) {
         <label>
           <span>分类 *</span>
           <select value={categoryId} onChange={e => setCategoryId((e.target as HTMLSelectElement).value)}>
-            {state.categories.map(c => (
+            {selectableCategories.map(c => (
               <option key={c.id} value={c.id}>{c.icon} {c.name}</option>
             ))}
           </select>
