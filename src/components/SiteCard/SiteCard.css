@@ -6,11 +6,11 @@
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: border-color .15s, transform .15s, box-shadow .15s;
-  overflow: hidden;
 }
 .site-card:hover {
   border-color: var(--accent);
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  z-index: 30;
 }
 .site-card.flash-highlight {
   animation: flash 2s;
@@ -298,4 +298,38 @@
   margin-top: 6px;
   background: var(--bg);
   font-weight: 500;
+}
+.fav-badge {
+  flex-shrink: 0;
+  font-size: 12px;
+}
+
+.visit-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 列表布局的访问量位置微调 */
+.site-card[data-layout="list"] .visit-count {
+  padding: 0 4px;
+}
+
+/* 紧凑布局显示访问量在名称右侧 */
+.site-card[data-layout="compact"] .card-footer {
+  display: none;
+}
+.site-card[data-layout="compact"] .visit-count-inline {
+  margin-left: 4px;
+  font-size: 10px;
+  color: var(--text-tertiary);
 }

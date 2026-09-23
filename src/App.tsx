@@ -33,6 +33,7 @@ import { syncScheduler } from './services/sync/scheduler';
 import { masterPassword } from './services/masterPassword';
 import { authService } from './services/authService';
 import { toast } from './utils/toast';
+import { BUILTIN_CATEGORIES, BUILTIN_CATEGORY, POPULAR_LIMIT } from './constants/builtInCategories';
 import type { Site } from './types';
 
 function Main() {
@@ -169,14 +170,26 @@ function Main() {
     });
   }, [state.loaded]);
 
+  const displayCategories = useMemo(() => {
+    const userCats = [...state.categories].sort((a, b) => a.order - b.order);
+    return [...BUILTIN_CATEGORIES, ...userCats];
+  }, [state.categories]);
+
   const groupedSites = useMemo(() => {
     const map = new Map<string, Site[]>();
+    const passTag = (s: Site) => !activeTag || (s.tags ?? []).includes(activeTag);
+
+    // 1. 用户分类：按 categoryId 归组
     for (const s of state.sites) {
-      if (activeTag && !(s.tags ?? []).includes(activeTag)) continue;
+      if (!passTag(s)) continue;
       const list = map.get(s.categoryId) ?? [];
-      list.push(s); map.set(s.categoryId, list);
+      list.push(s);
+      map.set(s.categoryId, list);
     }
-    for (const [k, list] of map) {
+    // 用户分类排序
+    for (const cat of state.categories) {
+      const list = map.get(cat.id);
+      if (!list) continue;
       list.sort((a, b) => {
         if (!!a.pinned !== !!b.pinned) return a.pinned ? -1 : 1;
         if (state.settings.sortBy === 'name') return a.name.localeCompare(b.name);
@@ -184,12 +197,25 @@ function Main() {
         if (state.settings.sortBy === 'visits') return (b.visitCount ?? 0) - (a.visitCount ?? 0);
         return 0;
       });
-      map.set(k, list);
     }
-    return map;
-  }, [state.sites, state.settings.sortBy, activeTag]);
 
-  const sortedCategories = [...state.categories].sort((a, b) => a.order - b.order);
+    // 2. 常用（按访问量排序，取 Top 30）
+    const popular = state.sites
+      .filter(s => (s.visitCount ?? 0) > 0)
+      .filter(passTag)
+      .sort((a, b) => (b.visitCount ?? 0) - (a.visitCount ?? 0))
+      .slice(0, POPULAR_LIMIT);
+    map.set(BUILTIN_CATEGORY.POPULAR, popular);
+
+    // 3. 收藏（按收藏顺序，最新在前）
+    const siteMap = new Map(state.sites.map(s => [s.id, s]));
+    const favorites = state.favorites
+      .map(id => siteMap.get(id))
+      .filter((s): s is Site => !!s && passTag(s));
+    map.set(BUILTIN_CATEGORY.FAVORITES, favorites);
+
+    return map;
+  }, [state.sites, state.categories, state.favorites, state.settings.sortBy, activeTag]);
 
   const scrollToCategory = (id: string) => {
     setActiveCategoryId(id);
@@ -251,13 +277,15 @@ function Main() {
         <main class="main-content">
           <WelcomeBanner onSetupPassword={() => { setPwSetupMode('setup'); setPwSetupOpen(true); }} />
           <TagBar active={activeTag} onChange={setActiveTag} />
-          {sortedCategories.length === 0 || state.sites.length === 0 ? (
+          {state.sites.length === 0 ? (
             <EmptyState
               onOpenSetup={() => { setPwSetupMode('setup'); setPwSetupOpen(true); }}
               onOpenSync={() => setSyncOpen(true)}
             />
-          ) : sortedCategories.map((cat, i) => {
+          ) : displayCategories.map((cat, i) => {
             const sites = groupedSites.get(cat.id) ?? [];
+            // 空的内置分类也不显示（避免占位）
+            if (sites.length === 0) return null;
             if (activeTag && sites.length === 0) return null;
             return (
               <LazySection key={cat.id} minHeight={200} eager={i < 3}>

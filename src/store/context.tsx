@@ -58,6 +58,7 @@ export function AppProvider({ children }: { children: ComponentChildren }) {
         authConfig,
         auth: { ...initialState.auth, mode, sessionExpireAt },
         publicSourceConfig: { ...initialState.publicSourceConfig, ...(storage.get(STORE_KEYS.PUBLIC_SOURCE_CONFIG) ?? {}) },
+        favorites: storage.get(STORE_KEYS.FAVORITES) ?? [],
       },
     });
   }, []);
@@ -71,6 +72,7 @@ export function AppProvider({ children }: { children: ComponentChildren }) {
   useEffect(() => { if (!state.loaded) return; debouncedSave(STORE_KEYS.SYNC_CONFIG, state.syncConfig); }, [state.syncConfig, state.loaded]);
   useEffect(() => { if (!state.loaded) return; debouncedSave(STORE_KEYS.AUTH_CONFIG, state.authConfig); }, [state.authConfig, state.loaded]);
   useEffect(() => { if (!state.loaded) return; debouncedSave(STORE_KEYS.PUBLIC_SOURCE_CONFIG, state.publicSourceConfig); }, [state.publicSourceConfig, state.loaded]);
+  useEffect(() => { if (!state.loaded) return; debouncedSave(STORE_KEYS.FAVORITES, state.favorites); }, [state.favorites, state.loaded]);
 
   return <AppContext.Provider value={{ state, dispatch, actions }}>{children}</AppContext.Provider>;
 }

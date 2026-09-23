@@ -2,6 +2,7 @@ import { useState } from 'preact/hooks';
 import type { Site } from '@/types';
 import { useApp } from '@/store/context';
 import { Modal } from '../Modal/Modal';
+import { isBuiltInCategory } from '@/constants/builtInCategories';
 import './ShareDialog.css';
 
 interface Props {
@@ -13,6 +14,7 @@ interface Props {
 export function IncomingShareDialog({ data, onClose, onConfirm }: Props) {
   const { state } = useApp();
   const [catId, setCatId] = useState(state.categories[0]?.id ?? '');
+  const selectableCategories = state.categories.filter(c => !isBuiltInCategory(c.id));
 
   return (
     <Modal open={true} title="收到分享" onClose={onClose} width={420}
@@ -37,7 +39,7 @@ export function IncomingShareDialog({ data, onClose, onConfirm }: Props) {
           <label>
             <span>添加到分类</span>
             <select value={catId} onChange={e => setCatId((e.target as HTMLSelectElement).value)}>
-              {state.categories.map(c => <option key={c.id} value={c.id}>{c.icon} {c.name}</option>)}
+              {selectableCategories.map(c => <option key={c.id} value={c.id}>{c.icon} {c.name}</option>)}
             </select>
           </label>
         </div>

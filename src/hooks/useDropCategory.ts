@@ -2,6 +2,7 @@ import { useState, useCallback } from 'preact/hooks';
 import { useApp, useActions } from '@/store/context';
 import { getDragSiteId } from './useDragSite';
 import { toast } from '@/utils/toast';
+import { isBuiltInCategory } from '@/constants/builtInCategories';
 
 export function useDropCategory(categoryId: string) {
   const { state, dispatch } = useApp();
@@ -23,6 +24,7 @@ export function useDropCategory(categoryId: string) {
   }, []);
 
   const onDrop = useCallback((e: DragEvent) => {
+    if (isBuiltInCategory(categoryId)) return;
     e.preventDefault();
     setActive(false);
     const siteId = getDragSiteId();

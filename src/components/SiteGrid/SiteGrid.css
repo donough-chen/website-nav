@@ -77,3 +77,12 @@
     grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
   }
 }
+
+.builtin-hint {
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--text-tertiary);
+  font-size: 10px;
+  font-weight: normal;
+}

@@ -109,4 +109,5 @@ export interface AppState {
   auth: AuthState;
   authConfig: AuthConfig;
   publicSourceConfig: PublicSourceConfig;
+  favorites: string[];  // site id 列表
 }

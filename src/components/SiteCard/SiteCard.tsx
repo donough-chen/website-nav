@@ -8,15 +8,17 @@ import { useGesture } from '@/hooks/useGesture';
 import { useIsMobile } from '@/hooks/useResponsive';
 import { useDragSite } from '@/hooks/useDragSite';
 import { LazyIcon } from '../LazyIcon/LazyIcon';
+import { formatVisitCount } from '@/utils/format';
 import './SiteCard.css';
 
 interface Props {
   site: Site;
+  isFavorite: boolean;
   onEdit: (site: Site) => void;
   onShare: (site: Site) => void;
 }
 
-function SiteCardBase({ site, onEdit, onShare }: Props) {
+function SiteCardBase({ site, isFavorite, onEdit, onShare }: Props) {
   const { state } = useApp();
   const actions = useActions();
   const { canEdit } = useAuth();
@@ -28,8 +30,11 @@ function SiteCardBase({ site, onEdit, onShare }: Props) {
 
   const faviconUrl = site.icon || getFaviconUrl(site.url, state.settings);
 
-  // 拖拽仅 admin 启用
-  const dragBind = canEdit && !isMobile ? useDragSite(site.id) : {};
+  // 始终调用 hook，通过条件决定是否启用
+  const dragBindings = useDragSite(site.id);
+  const dragBind = canEdit && !isMobile ? dragBindings : {};
+
+  const visitCount = site.visitCount ?? 0;
 
   // 手势：访客模式仅保留 onTap（打开链接）+ onLongPress 打开分享 sheet
   useGesture(cardRef, isMobile ? {
@@ -55,7 +60,7 @@ function SiteCardBase({ site, onEdit, onShare }: Props) {
   };
 
   const showDesc = state.settings.showDescription && site.description && layout !== 'compact';
-  const showRating = state.settings.showRating && site.rating && layout === 'card';
+  const showRating = state.settings.showRating && site.rating;
   const showTags = layout === 'card';
 
   return (
@@ -75,19 +80,30 @@ function SiteCardBase({ site, onEdit, onShare }: Props) {
         <div class="card-body">
           <div class="card-header">
             <span class="card-name">{site.name}</span>
+            {layout === 'compact' && visitCount > 0 && (
+              <span class="visit-count-inline">{formatVisitCount(visitCount)}</span>
+            )}
+            {isFavorite && <span class="fav-badge" title="已收藏">❤️</span>}
             {site.pinned && <span class="pin-badge" title="已置顶">📌</span>}
           </div>
           {showDesc && (
             <div class="card-desc">{site.description}</div>
           )}
-          {(showRating || showTags) && (
+          {(showRating || showTags || visitCount > 0) && (
             <div class="card-footer">
-              {showRating ? (
-                <span class="rating">
-                  {'★'.repeat(Math.round(site.rating!))}
-                  <span class="rating-off">{'★'.repeat(5 - Math.round(site.rating!))}</span>
-                </span>
-              ) : <span />}
+              <div class="footer-left">
+                {showRating ? (
+                  <span class="rating">
+                    {'★'.repeat(Math.round(site.rating!))}
+                    <span class="rating-off">{'★'.repeat(5 - Math.round(site.rating!))}</span>
+                  </span>
+                ) : null}
+                {visitCount > 0 && (
+                  <span class="visit-count" title={`访问 ${visitCount} 次`}>
+                    👁 {formatVisitCount(visitCount)}
+                  </span>
+                )}
+              </div>
               {showTags && site.tags && site.tags.length > 0 && (
                 <div class="tags">
                   {site.tags.slice(0, 2).map(t => <span key={t} class="tag">{t}</span>)}
@@ -103,7 +119,9 @@ function SiteCardBase({ site, onEdit, onShare }: Props) {
             <button class="action-btn" onClick={() => setShowMenu(!showMenu)}>⋯</button>
             {showMenu && (
               <div class="action-menu" onMouseLeave={() => setShowMenu(false)}>
-                {/* 分享全员可用 */}
+                <button onClick={() => { actions.toggleFavorite(site.id); setShowMenu(false); }}>
+                  {isFavorite ? '💔 取消收藏' : '❤️ 收藏'}
+                </button>
                 <button onClick={() => { onShare(site); setShowMenu(false); }}>📤 分享</button>
                 {canEdit && (
                   <>
@@ -126,6 +144,9 @@ function SiteCardBase({ site, onEdit, onShare }: Props) {
           <div class="action-sheet" onClick={e => e.stopPropagation()}>
             <div class="sheet-title">{site.name}</div>
             <button onClick={() => { window.open(site.url, '_blank'); setSheetOpen(false); }}>🔗 打开</button>
+            <button onClick={() => { actions.toggleFavorite(site.id); setSheetOpen(false); }}>
+              {isFavorite ? '💔 取消收藏' : '❤️ 收藏'}
+            </button>
             <button onClick={() => { onShare(site); setSheetOpen(false); }}>📤 分享</button>
             {canEdit && (
               <>
@@ -150,6 +171,7 @@ export const SiteCard = memo(SiteCardBase, (prev, next) => {
     a.id === b.id && a.name === b.name && a.url === b.url && a.icon === b.icon &&
     a.description === b.description && a.rating === b.rating && a.pinned === b.pinned &&
     a.visitCount === b.visitCount && a.categoryId === b.categoryId &&
+    prev.isFavorite === next.isFavorite &&
     JSON.stringify(a.tags) === JSON.stringify(b.tags) &&
     prev.onEdit === next.onEdit && prev.onShare === next.onShare
   );
