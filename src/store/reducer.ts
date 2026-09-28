@@ -24,7 +24,8 @@ export type Action =
   | { type: 'UPDATE_PUBLIC_SOURCE_CONFIG'; payload: Partial<PublicSourceConfig> }
   | { type: 'REPLACE_PUBLIC_DATA'; payload: { sites: Site[]; categories: Category[] } }
   | { type: 'TOGGLE_FAVORITE'; payload: { id: string } }
-  | { type: 'CLEAR_FAVORITES' };
+  | { type: 'CLEAR_FAVORITES' }
+	| { type: 'SET_APP_MODE'; payload: AuthMode };
 
 export const defaultSettings: Settings = {
 	theme: 'auto',
@@ -64,6 +65,7 @@ export const initialState: AppState = {
     excludeTags: [],
   },
   favorites: [],
+	appMode: null,
 };
 
 function addTombstone(list: Tombstone[], t: Tombstone): Tombstone[] {
@@ -223,6 +225,9 @@ export function reducer(state: AppState, action: Action): AppState {
 
     case 'CLEAR_FAVORITES':
       return { ...state, favorites: [] };
+
+		case 'SET_APP_MODE':
+  		return { ...state, appMode: action.payload };
 
 		default:
 			return state;

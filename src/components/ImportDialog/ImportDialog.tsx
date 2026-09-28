@@ -13,7 +13,7 @@ interface Props {
 }
 
 export function ImportDialog({ open, onClose }: Props) {
-  const { canEdit } = useAuth();
+  const { canEditLocal } = useAuth();
   const { state, dispatch } = useApp();
   const [preview, setPreview] = useState<ImportPreview | null>(null);
   const [strategy, setStrategy] = useState<ConflictStrategy>('skip');
@@ -22,7 +22,7 @@ export function ImportDialog({ open, onClose }: Props) {
   const [parsing, setParsing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  if (open && !canEdit) {
+  if (open && !canEditLocal) {
     return (
       <Modal open={open} title="批量导入" onClose={onClose} width={600}>
         <div style={{ padding: 40, textAlign: 'center' }}>

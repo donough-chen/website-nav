@@ -19,7 +19,7 @@ interface Props {
 }
 
 export function SyncPanel({ open, onClose }: Props) {
-  const { canEdit } = useAuth();
+  const { canSync } = useAuth();
   const { state, dispatch } = useApp();
   const [tab, setTab] = useState<'config' | 'action'>(state.syncConfig.enabled ? 'action' : 'config');
 
@@ -36,7 +36,7 @@ export function SyncPanel({ open, onClose }: Props) {
   const [syncing, setSyncing] = useState(false);
   const [pendingOutcome, setPendingOutcome] = useState<SyncOutcome | null>(null);
 
-  if (open && !canEdit) {
+  if (open && !canSync) {
     return (
       <Modal open={open} title="云端同步" onClose={onClose} width={560}>
         <div style={{ padding: 40, textAlign: 'center' }}>

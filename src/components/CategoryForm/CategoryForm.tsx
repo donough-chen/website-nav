@@ -12,13 +12,13 @@ interface Props {
 export function CategoryManager({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { state } = useApp();
   const actions = useActions(); // 从原 dispatch 改为 useActions
-  const { canEdit } = useAuth();
+  const { canEditLocal } = useAuth();
   const [name, setName] = useState('');
   const [icon, setIcon] = useState('📁');
   const [editingId, setEditingId] = useState<string | null>(null);
 
   // 若访客意外打开，直接关闭
-  if (open && !canEdit) {
+  if (open && !canEditLocal) {
     return (
       <Modal open={open} title="分类管理" onClose={onClose} width={480}>
         <div class="perm-guard" style={{ padding: 30 }}>

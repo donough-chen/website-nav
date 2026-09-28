@@ -1,8 +1,5 @@
 import type { Site, Category } from '@/types';
-
-const GITHUB_API = 'https://api.github.com';
-const GIST_FILENAME = 'nav-public.json';
-const GIST_DESC = 'Nav Public Data';
+import { DEFAULT_PUBLIC_GIST_ID, GITHUB_API, GIST_FILENAME, GIST_DESC} from '@/constants/config';
 
 export interface PublicPayload {
   schema: '1.0';
@@ -43,6 +40,9 @@ export const publicSource = {
 
     // 3. 本地存储
     if (localStoredId) return { id: localStoredId, source: 'local' };
+
+    // 4. 默认 ID
+    if (DEFAULT_PUBLIC_GIST_ID) return { id: DEFAULT_PUBLIC_GIST_ID, source: 'default' as any };
 
     return null;
   },

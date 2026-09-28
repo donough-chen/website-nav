@@ -21,7 +21,8 @@ import { ShareDialog } from './components/ShareDialog/ShareDialog';
 import { IncomingShareDialog } from './components/ShareDialog/IncomingShareDialog';
 import { UnlockDialog } from './components/UnlockDialog/UnlockDialog';
 import { PasswordSetupDialog } from './components/PasswordSetupDialog/PasswordSetupDialog';
-import { WelcomeBanner } from './components/WelcomeBanner/WelcomeBanner';
+import { ModeSelectDialog } from './components/ModeSelectDialog/ModeSelectDialog';
+// import { WelcomeBanner } from './components/WelcomeBanner/WelcomeBanner';
 import { PasswordPrompt } from './components/PasswordPrompt/PasswordPrompt';
 import { LazySection } from './components/LazySection/LazySection';
 import { EmptyState } from './components/EmptyState/EmptyState';
@@ -43,6 +44,9 @@ function Main() {
   const auth = useAuth();
   useAutoFetchPublic();
 
+  // 首次访问模式选择
+  const showModeSelect = state.loaded && auth.uninitialized;
+
   const [siteFormOpen, setSiteFormOpen] = useState(false);
   const [editingSite, setEditingSite] = useState<Site | null>(null);
   const [defaultCatId, setDefaultCatId] = useState<string | undefined>();
@@ -63,6 +67,27 @@ function Main() {
   const [unlockOpen, setUnlockOpen] = useState(false);
   const [pwSetupOpen, setPwSetupOpen] = useState(false);
   const [pwSetupMode, setPwSetupMode] = useState<'setup' | 'change'>('setup');
+
+  const handleLogoTrigger = () => {
+    if (auth.isAdmin) {
+      // 已是 admin，锁定
+      if (confirm('锁定管理员会话？')) {
+        authService.lock();
+        dispatch({ type: 'SET_AUTH_MODE', payload: { mode: state.appMode ?? 'open' } });
+        toast.info('🔒 已锁定');
+      }
+    } else if (auth.hasPassword) {
+      setUnlockOpen(true);
+    } else {
+      // 未设 admin 密码 → 引导设置
+      setPwSetupMode('setup');
+      setPwSetupOpen(true);
+    }
+  };
+
+  const handleSelectMode = (mode: 'guest' | 'open') => {
+    dispatch({ type: 'SET_APP_MODE', payload: mode });
+  };
 
   // 权限守卫：受保护弹窗需要在解锁后才能打开
   const guardEditAction = useCallback((fn: () => void) => {
@@ -87,7 +112,7 @@ function Main() {
   // 空闲自动锁定
   useIdleLock(state.authConfig.idleTimeoutMin, auth.isAdmin, () => {
     authService.lock();
-    dispatch({ type: 'SET_AUTH_MODE', payload: { mode: 'guest' } });
+    dispatch({ type: 'SET_AUTH_MODE', payload: { mode: state.appMode ?? 'open' } });
     toast.info('🔒 空闲超时，已自动锁定');
   });
 
@@ -128,12 +153,12 @@ function Main() {
     const remaining = auth.sessionExpireAt - Date.now();
     if (remaining <= 0) {
       authService.lock();
-      dispatch({ type: 'SET_AUTH_MODE', payload: { mode: 'guest' } });
+      dispatch({ type: 'SET_AUTH_MODE', payload: { mode: state.appMode ?? 'open' } });
       return;
     }
     const t = setTimeout(() => {
       authService.lock();
-      dispatch({ type: 'SET_AUTH_MODE', payload: { mode: 'guest' } });
+      dispatch({ type: 'SET_AUTH_MODE', payload: { mode: state.appMode ?? 'open' } });
       toast.info('🔒 会话已过期');
     }, remaining);
     return () => clearTimeout(t);
@@ -264,7 +289,7 @@ function Main() {
         onAdd={() => openAdd()}
         onSettings={() => setSettingsOpen(true)}
         onMenu={() => setSidebarOpen(true)}
-        onRequestUnlock={() => setUnlockOpen(true)}
+        onLogoTrigger={handleLogoTrigger}
       />
       <div class="app-body">
         <Sidebar
@@ -275,7 +300,7 @@ function Main() {
           onManageCategories={() => guardEditAction(() => setCatMgrOpen(true))}
         />
         <main class="main-content">
-          <WelcomeBanner onSetupPassword={() => { setPwSetupMode('setup'); setPwSetupOpen(true); }} />
+          {/* <WelcomeBanner onSetupPassword={() => { setPwSetupMode('setup'); setPwSetupOpen(true); }} /> */}
           <TagBar active={activeTag} onChange={setActiveTag} />
           {state.sites.length === 0 ? (
             <EmptyState
@@ -307,20 +332,11 @@ function Main() {
         onOpenSync={() => { setSettingsOpen(false); setSyncOpen(true); }}
         onOpenStats={() => { setSettingsOpen(false); setStatsOpen(true); }}
         onExportEncrypted={() => { setSettingsOpen(false); setExportPwOpen(true); }}
-        onSetupPassword={() => {
-          setSettingsOpen(false);
-          setPwSetupMode('setup');
-          setPwSetupOpen(true);
-        }}
-        onChangePassword={() => {
-          setSettingsOpen(false);
-          setPwSetupMode('change');
-          setPwSetupOpen(true);
-        }}
-        onRequestUnlock={() => {
-          setSettingsOpen(false);
-          setUnlockOpen(true);
-        }}
+      />
+      {/* 首次访问模式选择 */}
+      <ModeSelectDialog
+        open={showModeSelect}
+        onSelect={handleSelectMode}
       />
       <ImportDialog open={importOpen} onClose={() => setImportOpen(false)} />
       <SyncPanel open={syncOpen} onClose={() => setSyncOpen(false)} />

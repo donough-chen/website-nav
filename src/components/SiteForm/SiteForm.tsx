@@ -15,7 +15,7 @@ interface Props {
 }
 
 export function SiteForm({ open, site, defaultCategoryId, onClose }: Props) {
-  const { canEdit } = useAuth();
+  const { canEditLocal } = useAuth();
   const { state, dispatch } = useApp();
   const actions = useActions();
 
@@ -31,7 +31,7 @@ export function SiteForm({ open, site, defaultCategoryId, onClose }: Props) {
   // categories 下拉源
   const selectableCategories = state.categories.filter(c => !isBuiltInCategory(c.id));
 
-  if (open && !canEdit) {
+  if (open && !canEditLocal) {
     return (
       <Modal open={open} title="添加网址" onClose={onClose} width={480}>
         <div style={{ padding: 30, textAlign: 'center' }}>

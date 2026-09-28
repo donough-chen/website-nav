@@ -67,6 +67,7 @@ export type SiteInput = Omit<Site, 'id' | 'createdAt' | 'updatedAt' | 'visitCoun
 export type CategoryInput = Omit<Category, 'id' | 'createdAt' | 'updatedAt' | 'order'>;
 
 export type AuthMode = 'open' | 'guest' | 'admin';
+export type AppMode = 'open' | 'guest' | 'admin';
 
 export interface AuthConfig {
   hasPassword: boolean;
@@ -110,4 +111,5 @@ export interface AppState {
   authConfig: AuthConfig;
   publicSourceConfig: PublicSourceConfig;
   favorites: string[];  // site id 列表
+  appMode: AuthMode | null;   // null 表示首次访问未选择
 }

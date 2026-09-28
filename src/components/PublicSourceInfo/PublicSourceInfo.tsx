@@ -5,12 +5,12 @@ import './PublicSourceInfo.css';
 
 export function PublicSourceInfo() {
   const { state } = useApp();
-  const { isAdmin } = useAuth();
+  const { isGuest } = useAuth();
   const config = state.publicSourceConfig;
   const { refresh, refreshing } = usePublicRefresh();
 
-  // Admin 或无数据源时不显示
-  if (isAdmin || !config.gistId) return null;
+  //  仅 guest 模式显示（open/admin 不显示，避免误导）
+  if (!isGuest || !config.gistId) return null;
 
   const timeText = config.lastFetchedAt ? formatRelative(config.lastFetchedAt) : '从未';
   const gistUrl = `https://gist.github.com/${config.gistId}`;

@@ -12,10 +12,10 @@ interface Props {
   onAdd: () => void;
   onSettings: () => void;
   onMenu: () => void;
-  onRequestUnlock: () => void;
+  onLogoTrigger: () => void;
 }
 
-export function Header({ onSearch, onAdd, onSettings, onMenu, onRequestUnlock }: Props) {
+export function Header({ onSearch, onAdd, onSettings, onMenu, onLogoTrigger}: Props) {
   const { state } = useApp();
   const { canEdit, isGuest, isAdmin, hasPassword } = useAuth();
   const isMobile = useIsMobile();
@@ -23,11 +23,11 @@ export function Header({ onSearch, onAdd, onSettings, onMenu, onRequestUnlock }:
   const secretClick = useSecretTrigger({
     count: 10,
     windowMs: 20_000,
-    onTrigger: onRequestUnlock,
+    onTrigger: onLogoTrigger,
   });
 
   const handleLogoClick = () => {
-    if (hasPassword && !isAdmin) secretClick();
+    secretClick();
   };
 
   const syncIcon = state.syncConfig.enabled
@@ -47,7 +47,7 @@ export function Header({ onSearch, onAdd, onSettings, onMenu, onRequestUnlock }:
           aria-label="Nav"
         >
           <img src={logoUrl} alt="Nav" class="logo-img" draggable={false} />
-          {isAdmin && <span class="logo-lock" aria-hidden>🔓</span>}
+          {/* {isAdmin && <span class="logo-lock" aria-hidden>🔓</span>} */}
         </div>
         {isAdmin && <AuthBadge />}
         <PublicSourceInfo />

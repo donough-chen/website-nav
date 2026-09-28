@@ -7,7 +7,7 @@ import './AuthBadge.css';
 
 export function AuthBadge() {
   const { isAdmin, sessionExpireAt } = useAuth();
-  const { dispatch } = useApp();
+  const { state, dispatch } = useApp();
   const [remaining, setRemaining] = useState('');
 
   useEffect(() => {
@@ -26,7 +26,7 @@ export function AuthBadge() {
 
   const handleLock = () => {
     authService.lock();
-    dispatch({ type: 'SET_AUTH_MODE', payload: { mode: 'guest' } });
+    dispatch({ type: 'SET_AUTH_MODE', payload: { mode: state.appMode ?? 'open' } });
     toast.info('🔒 已锁定');
   };
 

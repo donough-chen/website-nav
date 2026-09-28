@@ -102,4 +102,5 @@ export const STORE_KEYS = {
   SESSION: 'session', // sessionStorage
   PUBLIC_SOURCE_CONFIG: 'public_source_config',
   FAVORITES: 'favorites',
+  APP_MODE: 'app_mode',
 } as const;
