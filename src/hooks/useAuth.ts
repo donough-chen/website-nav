@@ -13,6 +13,7 @@ export function useAuth() {
   const uninitialized = appMode === null && !isAdmin;
   const mode = isAdmin ? 'admin' : appMode;
   const hasPassword = state.authConfig.hasPassword;
+  const needsWelcome = isOpen && !state.authConfig.welcomeDismissed;
 
   return {
     mode,
@@ -21,6 +22,7 @@ export function useAuth() {
     isOpen,
     isAdmin,
     hasPassword,
+    needsWelcome,
     // 权限颗粒度
     canEditLocal: isOpen || isAdmin,   // 本地网址+分类编辑
     canSync: isAdmin,                  // 云同步
