@@ -63,6 +63,19 @@ function SiteCardBase({ site, isFavorite, onEdit, onShare }: Props) {
   const showRating = state.settings.showRating && site.rating;
   const showTags = layout === 'card';
 
+  const renderRating = () => (showRating ? (
+    <span class="rating">
+      {'★'.repeat(Math.round(site.rating!))}
+      <span class="rating-off">{'★'.repeat(5 - Math.round(site.rating!))}</span>
+    </span>
+  ) : null);
+
+  const renderVisit = () => (visitCount > 0 ? (
+    <span class="visit-count" title={`访问 ${visitCount} 次`}>
+      👁 {formatVisitCount(visitCount)}
+    </span>
+  ) : null);
+
   return (
     <>
       <div
@@ -77,41 +90,43 @@ function SiteCardBase({ site, isFavorite, onEdit, onShare }: Props) {
         <div class="card-icon">
           <LazyIcon src={faviconUrl} name={site.name} />
         </div>
-        <div class="card-body">
-          <div class="card-header">
-            <span class="card-name">{site.name}</span>
-            {layout === 'compact' && visitCount > 0 && (
-              <span class="visit-count-inline">{formatVisitCount(visitCount)}</span>
-            )}
-            {isFavorite && <span class="fav-badge" title="已收藏">❤️</span>}
-            {site.pinned && <span class="pin-badge" title="已置顶">📌</span>}
-          </div>
-          {showDesc && (
-            <div class="card-desc">{site.description}</div>
+        {/* 上半部分：第一行 名称+收藏/置顶+操作按钮，第二行 评分/访问量 */}
+        <div class="card-header">
+          <span class="card-name">{site.name}</span>
+          {layout === 'compact' && visitCount > 0 && (
+            <span class="visit-count-inline">{formatVisitCount(visitCount)}</span>
           )}
-          {(showRating || showTags || visitCount > 0) && (
-            <div class="card-footer">
-              <div class="footer-left">
-                {showRating ? (
-                  <span class="rating">
-                    {'★'.repeat(Math.round(site.rating!))}
-                    <span class="rating-off">{'★'.repeat(5 - Math.round(site.rating!))}</span>
-                  </span>
-                ) : null}
-                {visitCount > 0 && (
-                  <span class="visit-count" title={`访问 ${visitCount} 次`}>
-                    👁 {formatVisitCount(visitCount)}
-                  </span>
-                )}
-              </div>
-              {showTags && site.tags && site.tags.length > 0 && (
-                <div class="tags">
-                  {site.tags.slice(0, 2).map(t => <span key={t} class="tag">{t}</span>)}
-                </div>
-              )}
+          {isFavorite && <span class="fav-badge" title="已收藏">❤️</span>}
+          {site.pinned && <span class="pin-badge" title="已置顶">📌</span>}
+          {layout === 'card' && (showRating || visitCount > 0) && (
+            <div class="card-meta">
+              {renderRating()}
+              {renderVisit()}
             </div>
           )}
         </div>
+
+        {/* 中间：标签独占一行，可横向滑动 */}
+        {layout === 'card' && showTags && site.tags && site.tags.length > 0 && (
+          <div class="tags">
+            {site.tags.map(t => <span key={t} class="tag">{t}</span>)}
+          </div>
+        )}
+
+        {/* 下半部分：描述，两行省略 */}
+        {showDesc && (
+          <div class="card-desc" title={site.description}>{site.description}</div>
+        )}
+
+        {/* 列表布局：评分/访问量置于行尾 */}
+        {layout !== 'card' && layout !== 'compact' && (showRating || visitCount > 0) && (
+          <div class="card-footer">
+            <div class="footer-left">
+              {renderRating()}
+              {renderVisit()}
+            </div>
+          </div>
+        )}
 
         {/* PC 端菜单 */}
         {!isMobile && (

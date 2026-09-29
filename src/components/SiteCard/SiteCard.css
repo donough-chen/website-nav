@@ -27,14 +27,6 @@
   background: var(--bg);
 }
 
-.card-body {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
 .card-header {
   display: flex;
   align-items: center;
@@ -83,9 +75,16 @@
 .tags {
   display: flex;
   gap: 4px;
-  overflow: hidden;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
+.tags::-webkit-scrollbar { display: none; }
 .tag {
+  flex-shrink: 0;
   padding: 1px 6px;
   border-radius: 8px;
   background: var(--bg);
@@ -146,11 +145,15 @@
 .site-card[data-layout="card"] {
   padding: 12px;
   min-height: 90px;
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  column-gap: 10px;
+  row-gap: 6px;
+  align-items: center;
 }
 .site-card[data-layout="card"] .card-icon {
+  grid-row: 1;
+  grid-column: 1;
   width: 40px;
   height: 40px;
   display: flex;
@@ -162,8 +165,40 @@
   width: 24px;
   height: 24px;
 }
+.site-card[data-layout="card"] .card-header {
+  grid-row: 1;
+  grid-column: 2;
+  flex-wrap: wrap;
+  row-gap: 2px;
+}
+/* 卡片布局：第二行 评分/访问量 */
+.site-card[data-layout="card"] .card-meta {
+  flex-basis: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+.site-card[data-layout="card"] .card-actions {
+  top: 10px;
+}
+.site-card[data-layout="card"] .tags {
+  grid-column: 1 / -1;
+  width: 100%;
+}
+.site-card[data-layout="card"] .card-desc {
+  grid-column: 1 / -1;
+}
 .site-card[data-layout="card"] .card-name {
   font-size: 14px;
+}
+/* 卡片布局：评分/访问量/徽标与名称同排，固定不压缩 */
+.site-card[data-layout="card"] .card-header .rating,
+.site-card[data-layout="card"] .card-header .visit-count,
+.site-card[data-layout="card"] .card-header .fav-badge,
+.site-card[data-layout="card"] .card-header .pin-badge {
+  flex-shrink: 0;
 }
 
 /* ==================== 布局：列表 ==================== */
@@ -186,12 +221,6 @@
 .site-card[data-layout="list"] .card-icon img {
   width: 20px;
   height: 20px;
-}
-.site-card[data-layout="list"] .card-body {
-  flex-direction: row;
-  align-items: center;
-  gap: 12px;
-  overflow: hidden;
 }
 .site-card[data-layout="list"] .card-header {
   flex: 0 0 auto;
@@ -239,9 +268,12 @@
   width: 16px;
   height: 16px;
 }
-.site-card[data-layout="compact"] .card-body { gap: 0; }
 .site-card[data-layout="compact"] .card-name {
   font-size: 12px;
+}
+.site-card[data-layout="compact"] .card-header {
+  flex: 1;
+  min-width: 0;
 }
 .site-card[data-layout="compact"] .card-actions {
   top: 50%;
