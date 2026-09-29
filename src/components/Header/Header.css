@@ -120,6 +120,13 @@
   cursor: help;
 }
 
+/* 中屏（901–1270px）：左/右列按内容宽度排布，避免 header-left 与搜索框重叠 */
+@media (min-width: 901px) and (max-width: 1270px) {
+  .app-header {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+}
+
 /* 平板 */
 @media (max-width: 900px) {
   .app-header {

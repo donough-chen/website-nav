@@ -31,5 +31,10 @@
 
 @media (max-width: 640px) {
   .public-source-info { font-size: 10px; padding: 2px 6px; }
-  .psi-owner { max-width: 80px; overflow: hidden; text-overflow: ellipsis; }
+  /* 窄屏移动端隐藏作者/分隔符/时间，仅保留头像与刷新、源数据按钮，避免内容拥挤 */
+  .psi-owner,
+  .psi-sep,
+  .psi-time {
+    display: none;
+  }
 }
