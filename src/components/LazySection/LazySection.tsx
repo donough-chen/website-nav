@@ -4,16 +4,19 @@ import type { ComponentChildren } from 'preact';
 interface Props {
   minHeight?: number;
   eager?: boolean; // 首屏之上强制立即渲染
+  forceRender?: boolean; // 外部主动要求渲染（如点击侧边栏/搜索定位时）
   children: ComponentChildren;
 }
 
-/** 使用 content-visibility 优化，进入视口才详细渲染 */
-export function LazySection({ minHeight = 200, eager, children }: Props) {
+/** 使用 content-visibility 优化，进入视口才详细渲染；forceRender 时立即渲染以便定位跳转 */
+export function LazySection({ minHeight = 200, eager, forceRender, children }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const [rendered, setRendered] = useState(!!eager);
 
+  const visible = rendered || forceRender;
+
   useEffect(() => {
-    if (rendered) return;
+    if (visible) return;
     const el = ref.current;
     if (!el) return;
     const io = new IntersectionObserver(
@@ -29,11 +32,11 @@ export function LazySection({ minHeight = 200, eager, children }: Props) {
     );
     io.observe(el);
     return () => io.disconnect();
-  }, [rendered]);
+  }, [visible]);
 
   return (
-    <div ref={ref} style={rendered ? undefined : { minHeight, contentVisibility: 'auto' }}>
-      {rendered ? children : null}
+    <div ref={ref} style={visible ? undefined : { minHeight, contentVisibility: 'auto' }}>
+      {visible ? children : null}
     </div>
   );
 }

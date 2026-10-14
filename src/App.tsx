@@ -17,6 +17,7 @@ import { StatsPanel } from './components/StatsPanel/StatsPanel';
 import { TagBar } from './components/TagBar/TagBar';
 import { ToastContainer } from './components/Toast/Toast';
 import { PWAPrompt } from './components/PWAPrompt/PWAPrompt';
+import { BackToTop } from './components/BackToTop/BackToTop';
 import { ShareDialog } from './components/ShareDialog/ShareDialog';
 import { IncomingShareDialog } from './components/ShareDialog/IncomingShareDialog';
 import { UnlockDialog } from './components/UnlockDialog/UnlockDialog';
@@ -59,6 +60,8 @@ function Main() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
   const [activeTag, setActiveTag] = useState<string | null>(null);
+  const [scrollRequest, setScrollRequest] = useState<{ categoryId: string; siteId?: string; seq: number } | null>(null);
+  const scrollSeq = useRef(0);
   const [shareSite, setShareSite] = useState<Site | null>(null);
   const [incomingShare, setIncomingShare] = useState<Partial<Site> | null>(null);
   const [exportPwOpen, setExportPwOpen] = useState(false);
@@ -242,22 +245,37 @@ function Main() {
     return map;
   }, [state.sites, state.categories, state.favorites, state.settings.sortBy, activeTag]);
 
+  const requestScroll = (target: { categoryId: string; siteId?: string }) => {
+    scrollSeq.current += 1;
+    setScrollRequest({ ...target, seq: scrollSeq.current });
+  };
+
   const scrollToCategory = (id: string) => {
     setActiveCategoryId(id);
-    document.querySelector<HTMLElement>(`[data-category="${id}"]`)
-      ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    requestScroll({ categoryId: id });
   };
 
   const locateSite = (site: Site) => {
-    scrollToCategory(site.categoryId);
-    setTimeout(() => {
-      const card = document.querySelector<HTMLElement>(`[data-site="${site.id}"]`);
-      if (card) {
-        card.classList.add('flash-highlight');
-        setTimeout(() => card.classList.remove('flash-highlight'), 2100);
-      }
-    }, 400);
+    setActiveCategoryId(site.categoryId);
+    requestScroll({ categoryId: site.categoryId, siteId: site.id });
   };
+
+  // 在目标分类（LazySection）渲染完成后执行滚动定位
+  useEffect(() => {
+    if (!scrollRequest) return;
+    const { categoryId, siteId } = scrollRequest;
+    const card = siteId
+      ? document.querySelector<HTMLElement>(`[data-site="${siteId}"]`)
+      : null;
+    if (card) {
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      card.classList.add('flash-highlight');
+      setTimeout(() => card.classList.remove('flash-highlight'), 2100);
+    } else {
+      document.querySelector<HTMLElement>(`[data-category="${categoryId}"]`)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [scrollRequest]);
 
   const handleIncomingConfirm = (catId: string) => {
     let targetCatId = catId;
@@ -313,7 +331,7 @@ function Main() {
             if (sites.length === 0) return null;
             if (activeTag && sites.length === 0) return null;
             return (
-              <LazySection key={cat.id} minHeight={200} eager={i < 3}>
+              <LazySection key={cat.id} minHeight={200} eager={i < 3} forceRender={activeCategoryId === cat.id}>
                 <SiteGrid category={cat} sites={sites}
                   onEditSite={openEdit} onAddSite={openAdd} onShareSite={openShare} />
               </LazySection>
@@ -375,6 +393,7 @@ function Main() {
       {auth.canEdit && (
         <button class="fab" onClick={() => openAdd()} aria-label="新增">+</button>
       )}
+      <BackToTop />
       <ToastContainer />
       <PWAPrompt />
     </div>

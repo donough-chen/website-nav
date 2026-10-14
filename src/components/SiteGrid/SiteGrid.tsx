@@ -16,7 +16,7 @@ interface Props {
   onShareSite: (site: Site) => void;
 }
 
-const VIRTUAL_THRESHOLD = 100;
+const VIRTUAL_THRESHOLD = 500;
 
 function SiteGridBase({ category, sites, onEditSite, onAddSite, onShareSite }: Props) {
   const { canEdit } = useAuth();

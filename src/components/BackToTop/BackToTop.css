@@ -1,0 +1,39 @@
+.back-to-top {
+  position: fixed;
+  right: 24px;
+  bottom: 28px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 89;
+  animation: back-to-top-in 0.2s ease;
+  transition: transform 0.15s, background 0.15s, color 0.15s;
+}
+.back-to-top:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+  transform: translateY(-2px);
+}
+.back-to-top:active {
+  transform: scale(0.92);
+}
+
+@keyframes back-to-top-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 移动端避开右下角的 FAB（+ 新增按钮） */
+@media (max-width: 1023px) {
+  .back-to-top {
+    right: 20px;
+    bottom: calc(88px + env(safe-area-inset-bottom));
+  }
+}
