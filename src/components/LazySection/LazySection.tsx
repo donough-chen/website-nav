@@ -1,22 +1,25 @@
-import { useRef, useState, useEffect } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import type { ComponentChildren } from 'preact';
 
 interface Props {
   minHeight?: number;
   eager?: boolean; // 首屏之上强制立即渲染
-  forceRender?: boolean; // 外部主动要求渲染（如点击侧边栏/搜索定位时）
+  forceRender?: boolean; // 定位跳转时强制渲染（并保持），确保 DOM 完整
   children: ComponentChildren;
 }
 
-/** 使用 content-visibility 优化，进入视口才详细渲染；forceRender 时立即渲染以便定位跳转 */
+/** 进入视口才详细渲染；forceRender 时立即渲染以支持精确定位跳转 */
 export function LazySection({ minHeight = 200, eager, forceRender, children }: Props) {
   const ref = useRef<HTMLDivElement>(null);
-  const [rendered, setRendered] = useState(!!eager);
+  const [rendered, setRendered] = useState(!!eager || !!forceRender);
 
-  const visible = rendered || forceRender;
+  // forceRender 变为 true 时立即渲染，并永久保持（一旦渲染就不再折叠）
+  useEffect(() => {
+    if (forceRender) setRendered(true);
+  }, [forceRender]);
 
   useEffect(() => {
-    if (visible) return;
+    if (rendered) return;
     const el = ref.current;
     if (!el) return;
     const io = new IntersectionObserver(
@@ -32,11 +35,7 @@ export function LazySection({ minHeight = 200, eager, forceRender, children }: P
     );
     io.observe(el);
     return () => io.disconnect();
-  }, [visible]);
+  }, [rendered]);
 
-  return (
-    <div ref={ref} style={visible ? undefined : { minHeight, contentVisibility: 'auto' }}>
-      {visible ? children : null}
-    </div>
-  );
+  return <div ref={ref}>{rendered ? children : <div style={{ minHeight }} />}</div>;
 }

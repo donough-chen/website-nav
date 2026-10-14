@@ -61,6 +61,7 @@ function Main() {
   const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const [scrollRequest, setScrollRequest] = useState<{ categoryId: string; siteId?: string; seq: number } | null>(null);
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(() => new Set());
   const scrollSeq = useRef(0);
   const [shareSite, setShareSite] = useState<Site | null>(null);
   const [incomingShare, setIncomingShare] = useState<Partial<Site> | null>(null);
@@ -250,31 +251,62 @@ function Main() {
     setScrollRequest({ ...target, seq: scrollSeq.current });
   };
 
+  // 定位跳转前，把目标分类及其之前的分类全部展开（永久渲染），
+  // 这样滚动路径上每个分类都是真实高度，scrollIntoView 才能精确定位。
+  const expandUpTo = (categoryId: string) => {
+    setExpandedCategories(prev => {
+      const toAdd: string[] = [];
+      for (const cat of displayCategories) {
+        const sites = groupedSites.get(cat.id) ?? [];
+        if (sites.length === 0) continue;
+        if (!prev.has(cat.id)) toAdd.push(cat.id);
+        if (cat.id === categoryId) break;
+      }
+      if (toAdd.length === 0) return prev;
+      const next = new Set(prev);
+      toAdd.forEach(id => next.add(id));
+      return next;
+    });
+  };
+
   const scrollToCategory = (id: string) => {
     setActiveCategoryId(id);
+    expandUpTo(id);
     requestScroll({ categoryId: id });
   };
 
   const locateSite = (site: Site) => {
     setActiveCategoryId(site.categoryId);
+    expandUpTo(site.categoryId);
     requestScroll({ categoryId: site.categoryId, siteId: site.id });
   };
 
-  // 在目标分类（LazySection）渲染完成后执行滚动定位
+  // 在目标分类渲染完成后执行滚动定位
   useEffect(() => {
     if (!scrollRequest) return;
     const { categoryId, siteId } = scrollRequest;
-    const card = siteId
-      ? document.querySelector<HTMLElement>(`[data-site="${siteId}"]`)
-      : null;
-    if (card) {
-      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      card.classList.add('flash-highlight');
-      setTimeout(() => card.classList.remove('flash-highlight'), 2100);
-    } else {
-      document.querySelector<HTMLElement>(`[data-category="${categoryId}"]`)
-        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    let cancelled = false;
+
+    // 双 rAF 等待展开的分类完成 DOM 渲染后再定位，避免占位高度导致的偏移
+    requestAnimationFrame(() => {
+      if (cancelled) return;
+      requestAnimationFrame(() => {
+        if (cancelled) return;
+        const card = siteId
+          ? document.querySelector<HTMLElement>(`[data-site="${siteId}"]`)
+          : null;
+        if (card) {
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          card.classList.add('flash-highlight');
+          setTimeout(() => card.classList.remove('flash-highlight'), 2100);
+        } else {
+          document.querySelector<HTMLElement>(`[data-category="${categoryId}"]`)
+            ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    return () => { cancelled = true; };
   }, [scrollRequest]);
 
   const handleIncomingConfirm = (catId: string) => {
@@ -329,9 +361,8 @@ function Main() {
             const sites = groupedSites.get(cat.id) ?? [];
             // 空的内置分类也不显示（避免占位）
             if (sites.length === 0) return null;
-            if (activeTag && sites.length === 0) return null;
             return (
-              <LazySection key={cat.id} minHeight={200} eager={i < 3} forceRender={activeCategoryId === cat.id}>
+              <LazySection key={cat.id} minHeight={200} eager={i < 3} forceRender={expandedCategories.has(cat.id)}>
                 <SiteGrid category={cat} sites={sites}
                   onEditSite={openEdit} onAddSite={openAdd} onShareSite={openShare} />
               </LazySection>

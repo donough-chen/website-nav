@@ -12,9 +12,9 @@ export function BackToTop() {
     const container = document.querySelector<HTMLElement>(SCROLL_CONTAINER);
     if (!container) return;
 
-    // 内容高度超过可视高度（即可滚动）才显示
+    // 内容高度超过可视高度（即可滚动）且页面已向上滑动（scrollTop > 0）才显示
     const update = () => {
-      const shouldShow = container.scrollHeight > container.clientHeight;
+      const shouldShow = container.scrollHeight > container.clientHeight && container.scrollTop > 0;
       if (shouldShow !== lastVisible.current) {
         lastVisible.current = shouldShow;
         setVisible(shouldShow);
@@ -22,6 +22,9 @@ export function BackToTop() {
     };
 
     update();
+
+    // 页面滚动位置变化
+    container.addEventListener('scroll', update, { passive: true });
 
     // 窗口尺寸变化（clientHeight 变化）
     window.addEventListener('resize', update);
@@ -35,6 +38,7 @@ export function BackToTop() {
     mo.observe(container, { childList: true, subtree: true });
 
     return () => {
+      container.removeEventListener('scroll', update);
       window.removeEventListener('resize', update);
       ro.disconnect();
       mo.disconnect();
