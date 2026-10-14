@@ -5,12 +5,12 @@ import './PublicSourceInfo.css';
 
 export function PublicSourceInfo() {
   const { state } = useApp();
-  const { isGuest } = useAuth();
+  const { isGuest, isOpen, isAdmin } = useAuth();
   const config = state.publicSourceConfig;
   const { refresh, refreshing } = usePublicRefresh();
 
-  //  仅 guest 模式显示（open/admin 不显示，避免误导）
-  if (!isGuest || !config.gistId) return null;
+  // 仅 guest/open/admin 模式显示（首次未选择模式时不显示）
+  if ((!isGuest && !isOpen && !isAdmin) || !config.gistId) return null;
 
   const timeText = config.lastFetchedAt ? formatRelative(config.lastFetchedAt) : '从未';
   const gistUrl = `https://gist.github.com/${config.gistId}`;
@@ -20,12 +20,12 @@ export function PublicSourceInfo() {
       {config.ownerAvatar && (
         <img src={config.ownerAvatar} alt="" class="psi-avatar" />
       )}
-      {config.ownerLogin && (
+      {isAdmin && config.ownerLogin && (
         <a href={`https://github.com/${config.ownerLogin}`} target="_blank" rel="noreferrer" class="psi-owner">
           @{config.ownerLogin}
         </a>
       )}
-      <span class="psi-sep">·</span>
+      {isAdmin && config.ownerLogin && <span class="psi-sep">·</span>}
       <span class="psi-time" title={new Date(config.lastFetchedAt ?? 0).toLocaleString()}>
         {timeText}
       </span>
@@ -33,7 +33,9 @@ export function PublicSourceInfo() {
         title="刷新数据">
         {refreshing ? '⏳' : '🔄'}
       </button>
-      <a href={gistUrl} target="_blank" rel="noreferrer" class="psi-source" title="查看源数据">🔗</a>
+      {isAdmin && (
+        <a href={gistUrl} target="_blank" rel="noreferrer" class="psi-source" title="查看源数据">🔗</a>
+      )}
     </div>
   );
 }

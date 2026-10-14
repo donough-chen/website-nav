@@ -62,7 +62,7 @@ export function Header({ onSearch, onAdd, onSettings, onMenu, onLogoTrigger}: Pr
       </div>
 
       <div class="header-right">
-        {syncIcon && canEdit && (
+        {isAdmin && syncIcon && canEdit && (
           <button class="icon-btn" onClick={onSettings} title={`同步状态：${state.syncStatus}`}>
             {syncIcon}
           </button>
