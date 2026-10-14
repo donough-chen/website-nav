@@ -194,7 +194,7 @@ export function SettingsPanel({
                 </div>
 
                 {/* 高级功能：仅 admin */}
-                {auth.canSync ? (
+                {auth.canSync && (
                   <div class="settings-group">
                     <div class="group-title">云端同步</div>
                     <div class="group-body">
@@ -202,22 +202,14 @@ export function SettingsPanel({
                       <div class="text-hint">支持 GitHub Gist / WebDAV，凭证加密存储</div>
                     </div>
                   </div>
-                ) : (
-                  <div class="settings-group locked">
-                    <div class="group-title">☁ 云端同步 · 仅管理员</div>
-                  </div>
                 )}
 
-                {auth.canPublish ? (
+                {auth.canPublish && (
                   <div class="settings-group">
                     <div class="group-title">🌐 公开发布</div>
                     <div class="group-body">
                       <PublicPublishPanel />
                     </div>
-                  </div>
-                ) : (
-                  <div class="settings-group locked">
-                    <div class="group-title">🌐 公开发布 · 仅管理员</div>
                   </div>
                 )}
 
@@ -266,7 +258,6 @@ export function SettingsPanel({
               <div><b>{state.sites.reduce((s, x) => s + (x.visitCount ?? 0), 0)}</b> 次访问</div>
             </div>
             <button class="btn btn-ghost" onClick={onOpenStats}>📊 查看详细统计</button>
-            <p class="text-hint" style={{ marginTop: 12 }}>技术栈：Preact + TypeScript + Vite</p>
             <div class="text-hint kbd-hints">
               <b>快捷键：</b><br />
               Ctrl+K — 搜索<br />
