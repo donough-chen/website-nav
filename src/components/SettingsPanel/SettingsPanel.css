@@ -129,6 +129,7 @@
 @media (max-width: 640px) {
   .settings-identity { flex-direction: column; align-items: flex-start; }
   .settings-tabs { overflow-x: auto; }
+  .kbd-hints { display: none; }
 }
 .settings-group.locked {
   padding: 12px 14px;

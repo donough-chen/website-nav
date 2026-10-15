@@ -111,7 +111,8 @@ export function SearchPanel({ open, onClose, onLocate }: Props) {
   return (
     <div class="search-mask" onClick={onClose}>
       <div class="search-panel" onClick={e => e.stopPropagation()}>
-        <div class="search-input-wrap">
+        <div class="search-top">
+          <div class="search-input-wrap">
           <span class="search-icon">🔍</span>
           <input
             ref={inputRef}
@@ -128,7 +129,9 @@ export function SearchPanel({ open, onClose, onLocate }: Props) {
           </button>
           <kbd class="kbd">ESC</kbd>
         </div>
+        </div>
 
+        <div class="search-body">
         {showFilters && (
           <div class="filter-panel">
             <div class="filter-row">
@@ -217,6 +220,7 @@ export function SearchPanel({ open, onClose, onLocate }: Props) {
             })}
           </div>
         )}
+        </div>
 
         <div class="search-footer">
           <span><kbd class="kbd">↑↓</kbd> 选择</span>

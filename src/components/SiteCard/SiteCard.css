@@ -13,7 +13,7 @@
   z-index: 30;
 }
 .site-card.flash-highlight {
-  animation: flash 2s;
+  animation: flash 4s;
 }
 @keyframes flash {
   0%, 100% { border-color: var(--border); }
